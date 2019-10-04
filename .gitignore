@@ -1,4 +1,7 @@
-#  Local .terraform directories
+# package directories
+.idea
+.terraform
+*.json
 **/.terraform/*
 
 # .tfstate files
