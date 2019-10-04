@@ -2,6 +2,10 @@
 
 Terraform Google GCP Deep Dive
 
+## Tasks
+[Task-1] - initial configuration, gcp project creation
+[Task-2] - updated configs and readme, added compute instance 
+
 ## To start you need
 * buy or rent domain
 * create valid credit card and put $1 on it
@@ -31,13 +35,19 @@ ACCOUNT_ID            NAME                   OPEN  MASTER_ACCOUNT_ID
 vvvvv-ttttttt-xxxxxx  My acc billings        True
 
 ```
-Export environment variables 
+Configure environment for the Google Cloud Terraform
 ```
-export TF_VAR_org_id=57xxxxxxxx
-export TF_VAR_billing_account=vvvvv-ttttttt-xxxxxx
-export TF_ADMIN=alex-terraform-admin
-export TF_CREDS=./creds.json
+export TF_VAR_org_id=57xxxxxxxx \
+export TF_VAR_billing_account=vvvvv-ttttttt-xxxxxx \
+export TF_ADMIN=alex-terraform-admin \
+export TF_VAR_region=us-central1 \
+export TF_VAR_tf_admin_project=${TF_ADMIN} \
+export GOOGLE_PROJECT=${TF_ADMIN} \
+export GOOGLE_CLOUD_KEYFILE_JSON=creds.json \
+export TF_VAR_target_project_id=gjtjfu-9685747 \
+export TF_VAR_target_project_name=google-project-589254
 ```
+
 Create the Terraform Admin Project
 ```
 gcloud projects create ${TF_ADMIN} \
@@ -103,23 +113,18 @@ Enable versioning for said remote bucket:
 gsutil versioning set on gs://${TF_ADMIN}
 ```
 
-Configure your environment for the Google Cloud Terraform
-
-```
-export GOOGLE_PROJECT=${TF_ADMIN}
-export TF_VAR_region=us-central1
-export TF_VAR_target_project_id=gjtjfu-9685747
-export TF_VAR_tf_admin_project=${TF_ADMIN}
-```
-
-Create project.tf and populate is with initial data (check the file for more details)
-
-
 Initialize the backend, check changes and apply them
 ```
 terraform init
 terraform plan
 terraform apply
+```
+
+At this point you could connect to computer instance using terraform output
+```
+export instance_id=$(terraform output instance_id)
+export project_id=$(terraform output project_id)
+gcloud compute ssh ${instance_id} --project ${project_id}
 ```
 
 Cleaning up
